@@ -1,0 +1,21 @@
+#!/bin/bash
+# Define a partition where it is going to be executed
+#SBATCH -p level3
+# Define number of nodes
+#SBATCH -N 1
+# Define number of cores
+#SBATCH -n 1
+# Set max wallclock time (max time which this job has to be executed. If not defined applies partition walltime)
+#SBATCH --time=10:00:00
+# Set name of job
+#SBATCH --job-name=FastQC
+# Mail alert at start, end and abortion of execution
+#SBATCH --mail-type=ALL
+# Send mail to this address
+#SBATCH --mail-user=Up201301811@fc.up.pt
+# Set memory pool for all cores
+#SBATCH --mem 100
+
+# Run the application
+~/software/FastQC/fastqc -o ~/darevskia/raw_reads/fastqc --noextract --nogroup *.gz
+

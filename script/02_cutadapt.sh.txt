@@ -1,0 +1,54 @@
+#!/bin/bash
+# Define a partition where it is going to be executed
+#SBATCH -p level3
+# Define number of nodes
+#SBATCH -N 1
+# Define number of cores
+#SBATCH -n 1
+# Set max wallclock time (max time which this job has to be executed. If not defined applies partition walltime)
+#SBATCH --time=10:00:00
+# Set name of job
+#SBATCH --job-name=cutadapt
+# Mail alert at start, end and abortion of execution
+#SBATCH --mail-type=ALL
+# Send mail to this address
+#SBATCH --mail-user=Up201301811@fc.up.pt
+# Set memory pool for all cores
+#SBATCH --mem 100
+
+#open the module
+module load lang/Python
+
+# Run the application
+cutadapt -b GATCGGAAGAGCACACGTCTGAACTCCAGTCAC -b ATCTCGTATGCCGTCTTCTGCTTG -B AATGATACGGCGACCACCGAGATCTACAC -B ACACTCTTTCCCTACACGACGCTCTTCCGATCT \
+        -e 0.2 -q 20 -m 40 \
+        -o read1-trimmed1.fastq.gz -p read2-trimmed2.fastq.gz \
+        AH3TLYBBXX_lane4-s324-index--CACCTTAC-CTTCGCCT-84-505_S324_L004_R1_001.fastq.gz \
+        AH3TLYBBXX_lane4-s324-index--CACCTTAC-CTTCGCCT-84-505_S324_L004_R2_001.fastq.gz
+
+
+#####Script 
+filename='AH3'*'L004'
+
+for read1 in $filename*R1_001.fastq.gz;do
+read2=$(echo $read1| sed 's/R1_001.fastq.gz/R2_001.fastq.gz/');
+# remove sequences with end of adapter (part after barcode)
+## -a FWD (R1) sequence adapter
+## -A REV (R2) sequence adapter
+## we can trim more than one adapter at once if we repeat the option code (-b or -B, in this case)
+cutadapt -b GATCGGAAGAGCACACGTCTGAACTCCAGTCAC -b ATCTCGTATGCCGTCTTCTGCTTG -B AATGATACGGCGACCACCGAGATCTACAC -B ACACTCTTTCCCTACACGACGCTCTTCCGATCT \
+	-e 0.2 -q 20 -m 40 \
+	-o $read1-trimmed1.fastq.gz -p $read2-trimmed2.fastq.gz $read1 $read2
+done
+
+
+
+#####Script exemplo 
+filename='AH3'*'L004'
+
+for read1 in $filename*R1_001.fastq.gz;do
+read2=$(echo $read1| sed 's/R1_001.fastq.gz/R2_001.fastq.gz/');
+echo "amostra seguinte" 
+echo "esta é a read1: $read1"
+echo "esta é a read2: $read2"
+done
